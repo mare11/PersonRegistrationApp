@@ -1,0 +1,25 @@
+.example-icon {
+    padding: 0 14px;
+    cursor: pointer;
+  }
+  
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+    /* width: 60%; */
+    margin-left: 20px;
+  }
+  
+  .mat-column-details, .mat-column-delete {
+    width: 50px;
+    padding-right: 20px;
+  }
+  
+  
