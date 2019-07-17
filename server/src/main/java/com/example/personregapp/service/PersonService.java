@@ -1,34 +1,55 @@
 package com.example.personregapp.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.example.personregapp.exception.PersonNotFoundException;
 import com.example.personregapp.model.Person;
 import com.example.personregapp.repository.PersonRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class PersonService {
-	
-	@Autowired
-	private PersonRepository personRepository;
-	
-	public Optional<Person> findOne(Long id) {
-		return personRepository.findById(id);
-	}
-	
-	public List<Person> findAll() {
-		return personRepository.findAll();
-	}
-	
-	public Person save(Person person) {
-		return personRepository.save(person);
-	}
 
-	public void remove(Long id) {
-		personRepository.deleteById(id);
-	}
+    @Autowired
+    private PersonRepository personRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public Flux<Person> findAllPersons() {
+//        return personRepository.findAll().delayElements(Duration.ofSeconds(1));
+        return personRepository.findAll();
+    }
+
+    public Mono<Person> findOnePerson(String username) {
+        return personRepository.findOneByUsername(username)
+                .doOnSuccess(person -> {
+                    if (person == null) {
+                        throw new PersonNotFoundException();
+                    }
+                });
+    }
+
+    public Mono<Person> addPerson(Person person) {
+        return personRepository.save(person);
+    }
+
+    public Mono<Person> updatePerson(Person person) {
+        getPerson(person);
+        return personRepository.save(person);
+    }
+
+    public Mono<Void> removePerson(Person person) {
+        getPerson(person);
+        return personRepository.delete(person);
+    }
+
+    private void getPerson(Person person) {
+        personRepository.findById(person.getId())
+                .doOnError(throwable -> {
+                    throw new PersonNotFoundException();
+                });
+    }
 }

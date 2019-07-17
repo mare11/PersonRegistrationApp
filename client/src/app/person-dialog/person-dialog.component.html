@@ -1,52 +1,56 @@
 <h1 mat-dialog-title>{{title}}</h1>
-<form [formGroup]="angForm" (ngSubmit)="savePerson()" novalidate>
+<form [formGroup]="angForm">
   <div mat-dialog-content>
 
-    <div class="form-group">
-      <mat-form-field>
-        <input class="form-control" matInput formControlName="firstName" placeholder="Enter first name" (keyup)="onKeyUp()">
-        <mat-error *ngIf="angForm.controls['firstName'].hasError('pattern')">
-          First name contains <strong> only letters</strong>
-        </mat-error>
-        <mat-error *ngIf="angForm.controls['firstName'].hasError('required')">
-          First name is<strong> required </strong>
-        </mat-error>
-      </mat-form-field>
-    </div>
+    <mat-form-field>
+      <input matInput formControlName="username" placeholder="Enter username">
+      <mat-error *ngIf="angForm.controls['username'].hasError('required')">
+        Username is<strong> required </strong>
+      </mat-error>
+    </mat-form-field>
 
-    <br/>
-    
-    <div class="form-group">
-      <mat-form-field>
-        <input class="form-control" matInput formControlName="lastName" placeholder="Enter last name" (keyup)="onKeyUp()">
-        <mat-error *ngIf="angForm.controls['lastName'].hasError('pattern')">
-          Last name contains <strong> only letters</strong>
-        </mat-error>
-        <mat-error *ngIf="angForm.controls['lastName'].hasError('required')">
-          Last name is<strong> required </strong>
-        </mat-error>
-      </mat-form-field>
-    </div>
+    <br />
 
-    <br/>
+    <mat-form-field>
+      <input matInput formControlName="firstName" placeholder="Enter first name">
+      <mat-error *ngIf="angForm.controls['firstName'].hasError('pattern')">
+        First name contains <strong> only letters</strong>
+      </mat-error>
+      <mat-error *ngIf="angForm.controls['firstName'].hasError('required')">
+        First name is<strong> required </strong>
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <mat-form-field>
-        <input class="form-control" matInput formControlName="age" placeholder="Enter age" (keyup)="onKeyUp()">
-        <mat-error *ngIf="angForm.controls['age'].hasError('pattern')">
-            Age contains <strong> only numbers</strong>
-          </mat-error>
-          <mat-error *ngIf="angForm.controls['age'].hasError('required')">
-            Age is<strong> required </strong>
-          </mat-error>
-      </mat-form-field>
-    
-    </div>
+    <br />
+
+    <mat-form-field>
+      <input matInput formControlName="lastName" placeholder="Enter last name">
+      <mat-error *ngIf="angForm.controls['lastName'].hasError('pattern')">
+        Last name contains <strong> only letters</strong>
+      </mat-error>
+      <mat-error *ngIf="angForm.controls['lastName'].hasError('required')">
+        Last name is<strong> required </strong>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field>
+      <input matInput formControlName="age" placeholder="Enter age">
+      <mat-error *ngIf="angForm.controls['age'].hasError('pattern')">
+        Age contains <strong> only numbers</strong>
+      </mat-error>
+      <mat-error *ngIf="angForm.controls['age'].hasError('required')">
+        Age is<strong> required </strong>
+      </mat-error>
+    </mat-form-field>
+
   </div>
-  
+
   <div mat-dialog-actions>
     <!-- <button mat-flat-button (click)="closeDialog()">Cancel</button> -->
-    <button mat-stroked-button [mat-dialog-close] color="warn">Cancel</button>
-    <button type="submit" mat-flat-button [disabled]="angForm.invalid" color="primary">Save</button>
+    <button mat-raised-button [mat-dialog-close] color="warn">Cancel</button>
+    <button type="submit" mat-raised-button [disabled]="angForm.invalid" color="primary"
+      (click)="savePerson()">Save</button>
   </div>
 </form>

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PersonService } from './person.service';
 import { MatPaginator, MatSort, MatTableDataSource, MatDialog, MatSnackBar } from '@angular/material';
-import { PersonDialogComponent } from './person-dialog/person-dialog.component';
+import { PersonDialogComponent, Person } from './person-dialog/person-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -12,20 +12,22 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 export class AppComponent implements OnInit {
   title = '';
   persons: any;
-  columnsToDisplay = ['firstName', 'lastName', 'age', 'details', 'delete'];
+  columnsToDisplay = ['username', 'firstName', 'lastName', 'age', 'details', 'delete'];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(private personService: PersonService, public dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.personService.getPersons().subscribe((data: any) => {
+    this.personService.getPersons().subscribe((data: Person[]) => {
       this.persons = new MatTableDataSource(data);
       this.persons.sort = this.sort;
       this.persons.paginator = this.paginator;
-    });
-
+    },
+      (erorr) => {
+        console.log(erorr);
+      });
   }
 
   applyFilter(filterValue: string) {
@@ -60,12 +62,12 @@ export class AppComponent implements OnInit {
     const dialogRef = this.dialog.open(PersonDialogComponent, {
       width: '350px',
       data: {
-      title: 'Update Person',
-      person: person
+        title: 'Update Person',
+        person: person
       }
     });
 
-    dialogRef.disableClose = true;
+    // dialogRef.disableClose = true;
 
     dialogRef.afterClosed().subscribe(user => {
       // updating table source binding
@@ -88,7 +90,7 @@ export class AppComponent implements OnInit {
   }
 
   deletePerson(person) {
-    if (confirm('Do you want to delete \'' + person.firstName + ' ' + person.lastName + '\' ?')) {
+    if (confirm('Do you want to delete \'' + person.username + '\' ?')) {
       this.personService.deletePerson(person).subscribe(
         () => {
           const index = this.persons.data.indexOf(person, 0);
