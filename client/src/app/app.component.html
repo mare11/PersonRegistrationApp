@@ -11,7 +11,8 @@
   Add person
 </button>
 <mat-form-field>
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search"
+    matTooltip="Search persons by username, first or last name">
 </mat-form-field>
 
 <div class="mat-elevation-z8">

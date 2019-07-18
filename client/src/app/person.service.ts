@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Person } from './person-dialog/person-dialog.component';
 
-const baseUrl = '/persons';
+const baseUrl = '/persons/';
 
 @Injectable({
   providedIn: 'root'
@@ -15,19 +16,19 @@ export class PersonService {
     return this.http.get(baseUrl);
   }
 
-  addPerson(person) {
+  searchPersons(searchQuery) {
+    return this.http.get(baseUrl + 'search/' + searchQuery);
+  }
+
+  addPerson(person: Person) {
     return this.http.post(baseUrl, person);
   }
 
-  updatePerson(person) {
-    return this.http.put(baseUrl, person);
+  updatePerson(person: Person) {
+    return this.http.put(baseUrl + person.username, person);
   }
 
-  deletePerson(person) {
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      body: person
-    };
-    return this.http.delete(baseUrl, httpOptions);
+  deletePerson(person: Person) {
+    return this.http.delete(baseUrl + person.username);
   }
 }

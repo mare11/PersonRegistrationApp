@@ -11,6 +11,7 @@ import { PersonDialogComponent, Person } from './person-dialog/person-dialog.com
 
 export class AppComponent implements OnInit {
   title = '';
+  allPersons: Person[];
   persons: any;
   columnsToDisplay = ['username', 'firstName', 'lastName', 'age', 'details', 'delete'];
 
@@ -20,18 +21,32 @@ export class AppComponent implements OnInit {
   constructor(private personService: PersonService, public dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.personService.getPersons().subscribe((data: Person[]) => {
-      this.persons = new MatTableDataSource(data);
-      this.persons.sort = this.sort;
-      this.persons.paginator = this.paginator;
-    },
+    this.personService.getPersons().subscribe(
+      (data: Person[]) => {
+        this.allPersons = data;
+        this.persons = new MatTableDataSource(data);
+        this.persons.sort = this.sort;
+        this.persons.paginator = this.paginator;
+      },
       (erorr) => {
         console.log(erorr);
       });
   }
 
   applyFilter(filterValue: string) {
-    this.persons.filter = filterValue.trim().toLowerCase();
+    filterValue = filterValue.trim();
+    if (filterValue && filterValue.length > 0) {
+      this.personService.searchPersons(filterValue).subscribe(
+        (data: Person[]) => {
+          this.persons = new MatTableDataSource(data);
+        },
+        (erorr) => {
+          console.log(erorr);
+        });
+    } else {
+      this.persons = new MatTableDataSource(this.allPersons);
+    }
+    // this.persons.filter = filterValue.trim().toLowerCase();
   }
 
   addPerson() {

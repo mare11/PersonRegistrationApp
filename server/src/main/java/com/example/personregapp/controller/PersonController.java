@@ -14,10 +14,14 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    //    @GetMapping(produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
     @GetMapping
     public Flux<Person> getAllPersons() {
         return personService.findAllPersons();
+    }
+
+    @GetMapping(value = "/search/{searchQuery}")
+    public Flux<Person> searchAllPersons(@PathVariable String searchQuery) {
+        return personService.searchAllPersons(searchQuery);
     }
 
     @GetMapping(value = "/{username}")
@@ -30,13 +34,13 @@ public class PersonController {
         return personService.addPerson(person);
     }
 
-    @PutMapping
-    public Mono<Person> updatePerson(@RequestBody Person person) {
-        return personService.updatePerson(person);
+    @PutMapping(value = "/{username}")
+    public Mono<Person> updatePerson(@PathVariable String username, @RequestBody Person person) {
+        return personService.updatePerson(username, person);
     }
 
-    @DeleteMapping
-    public Mono<Void> deletePerson(@RequestBody Person person) {
-        return personService.removePerson(person);
+    @DeleteMapping(value = "/{username}")
+    public Mono<Void> deletePerson(@PathVariable String username) {
+        return personService.deletePerson(username);
     }
 }

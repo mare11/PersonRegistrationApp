@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { PersonService } from '../person.service';
 
 export interface Person {
@@ -24,13 +24,13 @@ export class PersonDialogComponent implements OnInit {
   angForm: FormGroup;
 
   constructor(private personService: PersonService, private dialogRef: MatDialogRef<PersonDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any, private formBuilder: FormBuilder, private snackBar: MatSnackBar) {
+    @Inject(MAT_DIALOG_DATA) private data: any, private snackBar: MatSnackBar) {
 
-    this.title = data.title;
+    this.title = this.data.title;
 
-    if (data.person) {
+    if (this.data.person) {
       // copy the form object for updating
-      this.person = JSON.parse(JSON.stringify(data.person));
+      this.person = JSON.parse(JSON.stringify(this.data.person));
     } else {
       // adding new person
       this.person.id = null;
@@ -44,11 +44,11 @@ export class PersonDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.angForm = this.formBuilder.group({
-      username: [this.person.username, Validators.required],
-      firstName: [this.person.firstName, [Validators.required, Validators.pattern('[a-zA-Z ]+')]],
-      lastName: [this.person.lastName, [Validators.required, Validators.pattern('[a-zA-Z ]+')]],
-      age: [this.person.age, [Validators.required, Validators.pattern('[0-9]+')]],
+    this.angForm = new FormGroup({
+      username: new FormControl({ value: this.person.username, disabled: this.person.id }, Validators.required),
+      firstName: new FormControl(this.person.firstName, [Validators.required, Validators.pattern('[a-zA-Z ]+')]),
+      lastName: new FormControl(this.person.lastName, [Validators.required, Validators.pattern('[a-zA-Z ]+')]),
+      age: new FormControl(this.person.age, [Validators.required, Validators.pattern('[0-9]+')]),
     });
   }
 
@@ -58,7 +58,7 @@ export class PersonDialogComponent implements OnInit {
       return;
     }
 
-    const values = this.angForm.value;
+    const values = this.angForm.getRawValue();
     values.id = this.person.id;
     this.person = values;
 

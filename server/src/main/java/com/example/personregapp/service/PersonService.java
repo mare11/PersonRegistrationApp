@@ -19,37 +19,38 @@ public class PersonService {
     private ModelMapper modelMapper;
 
     public Flux<Person> findAllPersons() {
-//        return personRepository.findAll().delayElements(Duration.ofSeconds(1));
         return personRepository.findAll();
     }
 
+    public Flux<Person> searchAllPersons(String searchQuery) {
+        return personRepository.findByUsernameLikeIgnoreCaseOrFirstNameLikeIgnoreCaseOrLastNameLikeIgnoreCase(searchQuery, searchQuery, searchQuery);
+    }
+
     public Mono<Person> findOnePerson(String username) {
-        return personRepository.findOneByUsername(username)
-                .doOnSuccess(person -> {
-                    if (person == null) {
-                        throw new PersonNotFoundException();
-                    }
-                });
+        return getPersonByUsername(username);
     }
 
     public Mono<Person> addPerson(Person person) {
         return personRepository.save(person);
     }
 
-    public Mono<Person> updatePerson(Person person) {
-        getPerson(person);
-        return personRepository.save(person);
-    }
-
-    public Mono<Void> removePerson(Person person) {
-        getPerson(person);
-        return personRepository.delete(person);
-    }
-
-    private void getPerson(Person person) {
-        personRepository.findById(person.getId())
-                .doOnError(throwable -> {
-                    throw new PersonNotFoundException();
+    public Mono<Person> updatePerson(String username, Person newPerson) {
+        return getPersonByUsername(username)
+                .flatMap(oldPerson -> {
+                    oldPerson.setFirstName(newPerson.getFirstName());
+                    oldPerson.setLastName(newPerson.getLastName());
+                    oldPerson.setAge(newPerson.getAge());
+                    return personRepository.save(oldPerson);
                 });
+    }
+
+    public Mono<Void> deletePerson(String username) {
+        return getPersonByUsername(username)
+                .flatMap(personRepository::delete);
+    }
+
+    private Mono<Person> getPersonByUsername(String username) {
+        return personRepository.findOneByUsername(username)
+                .switchIfEmpty(Mono.error(new PersonNotFoundException()));
     }
 }
