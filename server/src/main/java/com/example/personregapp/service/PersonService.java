@@ -1,5 +1,6 @@
 package com.example.personregapp.service;
 
+import com.example.personregapp.aspect.TestAnnotation;
 import com.example.personregapp.exception.PersonNotFoundException;
 import com.example.personregapp.model.Person;
 import com.example.personregapp.repository.PersonRepository;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@TestAnnotation(value = "test annotation value on class")
 public class PersonService {
 
     @Autowired
@@ -18,6 +20,7 @@ public class PersonService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @TestAnnotation(value = "test annotation value on method")
     public Flux<Person> findAllPersons() {
         return personRepository.findAll();
     }
